@@ -79,6 +79,7 @@ public class PlayScreen implements Screen {
 
         // Update the player
         player.update(dt);
+        hud.update(dt);
 
         gamecam.position.x = player.b2body.getPosition().x;
 

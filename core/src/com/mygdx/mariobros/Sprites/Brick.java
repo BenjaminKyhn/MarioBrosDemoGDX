@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.mariobros.MarioBrosGame;
+import com.mygdx.mariobros.Scenes.HUD;
 
 public class Brick extends InteractiveTileObject {
     public Brick(World world, TiledMap map, Rectangle bounds){
@@ -17,5 +18,6 @@ public class Brick extends InteractiveTileObject {
     public void onHeadHit() {
         setCategoryFilter(MarioBrosGame.DESTROYED_BIT);
         getCell().setTile(null);
+        HUD.addScore(200);
     }
 }
