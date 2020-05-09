@@ -10,7 +10,9 @@ import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
 
 public class Mario extends Sprite {
-    public enum State {FALLING, JUMPING, STANDING, RUNNING};
+    public enum State {FALLING, JUMPING, STANDING, RUNNING}
+
+    ;
     public State currentState;
     public State previousState;
     public World world;
@@ -99,14 +101,18 @@ public class Mario extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(6 / MarioBrosGame.PPM);
         fdef.filter.categoryBits = MarioBrosGame.MARIO_BIT;
-        fdef.filter.maskBits = MarioBrosGame.DEFAULT_BIT | MarioBrosGame.COIN_BIT | MarioBrosGame.BRICK_BIT;
+        fdef.filter.maskBits = MarioBrosGame.GROUND_BIT |
+                MarioBrosGame.COIN_BIT |
+                MarioBrosGame.BRICK_BIT |
+                MarioBrosGame.ENEMY_BIT |
+                MarioBrosGame.OBJECT_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef);
 
         // Head collision
         EdgeShape head = new EdgeShape();
-        head.set(new Vector2(-2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM), new Vector2(2 / MarioBrosGame.PPM,6 / MarioBrosGame.PPM));
+        head.set(new Vector2(-2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM), new Vector2(2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM));
         fdef.shape = head;
         fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData("head");
