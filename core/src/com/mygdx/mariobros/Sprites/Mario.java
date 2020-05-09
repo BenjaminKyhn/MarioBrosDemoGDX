@@ -12,6 +12,7 @@ import com.mygdx.mariobros.Screens.PlayScreen;
 
 public class Mario extends Sprite {
     public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING}
+
     public State currentState;
     public State previousState;
 
@@ -30,6 +31,7 @@ public class Mario extends Sprite {
     private boolean runningRight;
     private boolean marioIsBig;
     private boolean runGrowAnimation;
+    private boolean timeToDefineBigMario;
 
     private PlayScreen screen;
 
@@ -80,8 +82,13 @@ public class Mario extends Sprite {
     }
 
     public void update(float dt) {
-        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+        if (marioIsBig)
+            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 - 6 / MarioBrosGame.PPM);
+        else
+            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
+        if (timeToDefineBigMario)
+            defineBigMario();
     }
 
     public TextureRegion getFrame(float dt) {
@@ -145,9 +152,48 @@ public class Mario extends Sprite {
         // Head collision
         EdgeShape head = new EdgeShape();
         head.set(new Vector2(-2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM), new Vector2(2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM));
+        fdef.filter.categoryBits = MarioBrosGame.MARIO_HEAD_BIT;
         fdef.shape = head;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("head"); // 'Causes a crash because this line returns a string in collision with the category bits
+        b2body.createFixture(fdef).setUserData(this); // 'Causes a crash because this line returns a string in collision with the category bits
+    }
+
+    public void defineBigMario() {
+        Vector2 currentPosition = b2body.getPosition();
+        world.destroyBody(b2body);
+
+        BodyDef bdef = new BodyDef();
+        bdef.position.set(currentPosition.add(0, 10 / MarioBrosGame.PPM));
+        bdef.type = BodyDef.BodyType.DynamicBody;
+        b2body = world.createBody(bdef);
+
+        // Fixture definition
+        FixtureDef fdef = new FixtureDef();
+        CircleShape shape = new CircleShape();
+        shape.setRadius(6 / MarioBrosGame.PPM);
+        fdef.filter.categoryBits = MarioBrosGame.MARIO_BIT;
+        fdef.filter.maskBits = MarioBrosGame.GROUND_BIT |
+                MarioBrosGame.COIN_BIT |
+                MarioBrosGame.BRICK_BIT |
+                MarioBrosGame.ENEMY_BIT |
+                MarioBrosGame.OBJECT_BIT |
+                MarioBrosGame.ENEMY_HEAD_BIT |
+                MarioBrosGame.ITEM_BIT;
+
+        fdef.shape = shape;
+        b2body.createFixture(fdef).setUserData(this);
+        shape.setPosition(new Vector2(0, -14 / MarioBrosGame.PPM));
+        b2body.createFixture(fdef).setUserData(this);
+
+        // Head collision
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM), new Vector2(2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM));
+        fdef.filter.categoryBits = MarioBrosGame.MARIO_HEAD_BIT;
+        fdef.shape = head;
+        fdef.isSensor = true;
+
+        b2body.createFixture(fdef).setUserData(this); // 'Causes a crash because this line returns a string in collision with the category bits
+        timeToDefineBigMario = false;
     }
 
     public State getState() {
@@ -163,10 +209,17 @@ public class Mario extends Sprite {
             return State.STANDING;
     }
 
-    public void grow(){
-        runGrowAnimation = true;
-        marioIsBig = true;
-        setBounds(getX(), getY(), getWidth(), getHeight() * 2);
-        MarioBrosGame.manager.get("audio/sounds/powerup.wav", Sound.class).play();
+    public void grow() {
+        if (!marioIsBig){
+            runGrowAnimation = true;
+            marioIsBig = true;
+            timeToDefineBigMario = true;
+            setBounds(getX(), getY(), getWidth(), getHeight() * 2);
+            MarioBrosGame.manager.get("audio/sounds/powerup.wav", Sound.class).play();
+        }
+    }
+
+    public boolean isBig(){
+        return marioIsBig;
     }
 }

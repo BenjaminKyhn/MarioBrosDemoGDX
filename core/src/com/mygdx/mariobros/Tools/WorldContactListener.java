@@ -17,17 +17,15 @@ public class WorldContactListener implements ContactListener {
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
-        // Call onHeadHit() method if one of the fixtures is a head and the other extends InteractiveTileObject
-        if ((fixA.getUserData() != null && fixA.getUserData().equals("head")) || (fixB.getUserData() != null && fixB.getUserData().equals("head"))) {
-            Fixture head = fixA.getUserData() == "head" ? fixA : fixB;
-            Fixture object = head == fixA ? fixB : fixA;
-
-            if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
-                ((InteractiveTileObject) object.getUserData()).onHeadHit();
-            }
-        }
-
+        // Handle Collisions
         switch (cDef) {
+            case MarioBrosGame.MARIO_HEAD_BIT | MarioBrosGame.BRICK_BIT:
+            case MarioBrosGame.MARIO_HEAD_BIT | MarioBrosGame.COIN_BIT:
+                if (fixA.getFilterData().categoryBits == MarioBrosGame.MARIO_HEAD_BIT)
+                    ((InteractiveTileObject) fixB.getUserData()).onHeadHit((Mario) fixA.getUserData());
+                else
+                    ((InteractiveTileObject) fixA.getUserData()).onHeadHit((Mario) fixB.getUserData());
+                break;
             case MarioBrosGame.ENEMY_HEAD_BIT | MarioBrosGame.MARIO_BIT:
                 if (fixA.getFilterData().categoryBits == MarioBrosGame.ENEMY_HEAD_BIT)
                     ((Enemy) fixA.getUserData()).hitOnHead();
