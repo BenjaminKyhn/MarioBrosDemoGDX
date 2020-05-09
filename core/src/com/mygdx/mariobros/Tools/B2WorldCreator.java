@@ -16,7 +16,7 @@ import com.mygdx.mariobros.Sprites.Enemies.Goomba;
 
 public class B2WorldCreator {
     private Array<Goomba> goombas;
-    private Array<Turtle> turtles;
+    private static Array<Turtle> turtles;
 
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
@@ -84,5 +84,9 @@ public class B2WorldCreator {
         enemies.addAll(goombas);
         enemies.addAll(turtles);
         return enemies;
+    }
+
+    public static void removeTurtle(Turtle turtle){
+        turtles.removeValue(turtle, true);
     }
 }

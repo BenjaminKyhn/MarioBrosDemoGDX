@@ -24,9 +24,6 @@ import com.mygdx.mariobros.Sprites.Items.Mushroom;
 import com.mygdx.mariobros.Sprites.Mario;
 import com.mygdx.mariobros.Tools.B2WorldCreator;
 import com.mygdx.mariobros.Tools.WorldContactListener;
-
-import java.util.PriorityQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class PlayScreen implements Screen {
