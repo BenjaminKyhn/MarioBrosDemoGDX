@@ -3,9 +3,12 @@ package com.mygdx.mariobros.Sprites.TileObjects;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Scenes.HUD;
 import com.mygdx.mariobros.Screens.PlayScreen;
+import com.mygdx.mariobros.Sprites.Items.ItemDef;
+import com.mygdx.mariobros.Sprites.Items.Mushroom;
 
 public class Coin extends InteractiveTileObject {
     private static TiledMapTileSet tileSet;
@@ -22,8 +25,12 @@ public class Coin extends InteractiveTileObject {
     public void onHeadHit() {
         if (getCell().getTile().getId() == BLANK_COIN)
             MarioBrosGame.manager.get("audio/sounds/bump.wav", Sound.class).play();
-        else
+        else{
             MarioBrosGame.manager.get("audio/sounds/coin.wav", Sound.class).play();
+            screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / MarioBrosGame.PPM),
+                    Mushroom.class));
+        }
+
         getCell().setTile(tileSet.getTile(BLANK_COIN));
         HUD.addScore(200);
     }

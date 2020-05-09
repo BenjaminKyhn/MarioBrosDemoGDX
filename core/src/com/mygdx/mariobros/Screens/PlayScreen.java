@@ -12,14 +12,20 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Scenes.HUD;
 import com.mygdx.mariobros.Sprites.Enemies.Enemy;
+import com.mygdx.mariobros.Sprites.Items.Item;
+import com.mygdx.mariobros.Sprites.Items.ItemDef;
+import com.mygdx.mariobros.Sprites.Items.Mushroom;
 import com.mygdx.mariobros.Sprites.Mario;
 import com.mygdx.mariobros.Tools.B2WorldCreator;
 import com.mygdx.mariobros.Tools.WorldContactListener;
+
+import java.util.PriorityQueue;
 
 public class PlayScreen implements Screen {
     private MarioBrosGame game;
@@ -36,6 +42,9 @@ public class PlayScreen implements Screen {
     public Mario player;
 
     private Music music;
+
+    private Array<Item> items;
+    private PriorityQueue<ItemDef> itemsToSpawn;
 
     // Box2d variables
     private World world;
@@ -64,6 +73,22 @@ public class PlayScreen implements Screen {
         music = MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class);
         music.setLooping(true);
         music.play();
+
+        items = new Array<Item>();
+        itemsToSpawn = new PriorityQueue<ItemDef>();
+    }
+
+    public void spawnItem(ItemDef idef){
+        itemsToSpawn.add(idef);
+    }
+
+    public void handleSpawningItems(){
+        if (!itemsToSpawn.isEmpty()){
+            ItemDef idef = itemsToSpawn.poll();
+            if (idef.type == Mushroom.class){
+                items.add(new Mushroom(this, idef.position.x, idef.position.y));
+            }
+        }
     }
 
     @Override
@@ -82,6 +107,7 @@ public class PlayScreen implements Screen {
 
     public void update(float dt){
         handleInput(dt);
+        handleSpawningItems();
 
         // Takes one step in the physics simulation (60 times per second)
         world.step(1/60f, 6, 2);
@@ -93,6 +119,9 @@ public class PlayScreen implements Screen {
             if (enemy.getX() < player.getX() + 224 / MarioBrosGame.PPM)
                 enemy.b2body.setActive(true);
         }
+
+        for (Item item : items)
+            item.update(dt);
 
         hud.update(dt);
 
@@ -122,6 +151,8 @@ public class PlayScreen implements Screen {
         player.draw(game.batch);
         for (Enemy enemy: creator.getGoombas())
             enemy.draw(game.batch);
+        for (Item item : items)
+            item.draw(game.batch);
         game.batch.end();
 
         // Draw texture to screen
