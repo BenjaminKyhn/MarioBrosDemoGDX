@@ -1,4 +1,4 @@
-package com.mygdx.mariobros.Sprites;
+package com.mygdx.mariobros.Sprites.Enemies;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -19,6 +19,7 @@ public abstract class Enemy extends Sprite {
         setPosition(x, y);
         defineEnemy();
         velocity = new Vector2(1, 0);
+        b2body.setActive(false);
     }
 
     protected abstract void defineEnemy();

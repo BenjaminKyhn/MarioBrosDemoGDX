@@ -3,9 +3,8 @@ package com.mygdx.mariobros.Tools;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.mariobros.MarioBrosGame;
-import com.mygdx.mariobros.Sprites.Enemy;
-import com.mygdx.mariobros.Sprites.InteractiveTileObject;
-import com.mygdx.mariobros.Sprites.Mario;
+import com.mygdx.mariobros.Sprites.Enemies.Enemy;
+import com.mygdx.mariobros.Sprites.TileObjects.InteractiveTileObject;
 
 public class WorldContactListener implements ContactListener {
     @Override

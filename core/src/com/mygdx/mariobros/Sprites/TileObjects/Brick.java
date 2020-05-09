@@ -1,4 +1,4 @@
-package com.mygdx.mariobros.Sprites;
+package com.mygdx.mariobros.Sprites.TileObjects;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;

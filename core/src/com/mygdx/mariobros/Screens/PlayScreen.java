@@ -16,8 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Scenes.HUD;
-import com.mygdx.mariobros.Sprites.Enemy;
-import com.mygdx.mariobros.Sprites.Goomba;
+import com.mygdx.mariobros.Sprites.Enemies.Enemy;
 import com.mygdx.mariobros.Sprites.Mario;
 import com.mygdx.mariobros.Tools.B2WorldCreator;
 import com.mygdx.mariobros.Tools.WorldContactListener;
@@ -89,8 +88,12 @@ public class PlayScreen implements Screen {
 
         // Update the player
         player.update(dt);
-        for (Enemy enemy: creator.getGoombas())
+        for (Enemy enemy: creator.getGoombas()){
             enemy.update(dt);
+            if (enemy.getX() < player.getX() + 224 / MarioBrosGame.PPM)
+                enemy.b2body.setActive(true);
+        }
+
         hud.update(dt);
 
         gamecam.position.x = player.b2body.getPosition().x;
