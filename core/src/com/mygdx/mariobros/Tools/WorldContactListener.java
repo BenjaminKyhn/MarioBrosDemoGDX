@@ -1,5 +1,6 @@
 package com.mygdx.mariobros.Tools;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Sprites.Enemy;
@@ -27,9 +28,18 @@ public class WorldContactListener implements ContactListener {
         switch (cDef) {
             case MarioBrosGame.ENEMY_HEAD_BIT | MarioBrosGame.MARIO_BIT:
                 if (fixA.getFilterData().categoryBits == MarioBrosGame.ENEMY_HEAD_BIT)
-                    ((Enemy)fixA.getUserData()).hitOnHead();
-                else if (fixB.getFilterData().categoryBits == MarioBrosGame.ENEMY_HEAD_BIT)
-                    ((Enemy)fixB.getUserData()).hitOnHead();
+                    ((Enemy) fixA.getUserData()).hitOnHead();
+                else
+                    ((Enemy) fixB.getUserData()).hitOnHead();
+                break;
+            case MarioBrosGame.ENEMY_BIT | MarioBrosGame.OBJECT_BIT:
+                if (fixA.getFilterData().categoryBits == MarioBrosGame.ENEMY_BIT)
+                    ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
+                else
+                    ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
+                break;
+            case MarioBrosGame.MARIO_BIT | MarioBrosGame.ENEMY_BIT:
+                Gdx.app.log("MARIO", "DIED");
         }
     }
 

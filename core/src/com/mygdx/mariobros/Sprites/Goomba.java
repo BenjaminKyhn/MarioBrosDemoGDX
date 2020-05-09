@@ -1,6 +1,7 @@
 package com.mygdx.mariobros.Sprites;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -38,9 +39,12 @@ public class Goomba extends Enemy {
         if (setToDestroy && !destroyed){
             world.destroyBody(b2body);
             destroyed = true;
+            // Didn't work without instantiating the PlayScreen in the class
             setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
+            stateTime = 0;
         }
         else if (!destroyed){
+            b2body.setLinearVelocity(velocity);
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
         }
@@ -66,7 +70,7 @@ public class Goomba extends Enemy {
                 MarioBrosGame.MARIO_BIT;
 
         fdef.shape = shape;
-        b2body.createFixture(fdef);
+        b2body.createFixture(fdef).setUserData(this);
 
         // Create head
         PolygonShape head = new PolygonShape();
@@ -81,6 +85,11 @@ public class Goomba extends Enemy {
         fdef.restitution = 0.5f; // adds bounce to collisions
         fdef.filter.categoryBits = MarioBrosGame.ENEMY_HEAD_BIT;
         b2body.createFixture(fdef).setUserData(this); // adds access to this class from the collision handler WorldContactListener
+    }
+
+    public void draw(Batch batch){
+        if (!destroyed || stateTime < 1)
+            super.draw(batch);
     }
 
     @Override
