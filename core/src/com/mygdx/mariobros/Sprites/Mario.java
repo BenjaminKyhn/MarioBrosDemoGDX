@@ -1,5 +1,6 @@
 package com.mygdx.mariobros.Sprites;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,7 +12,7 @@ import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
 
 public class Mario extends Sprite {
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING}
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD}
 
     public State currentState;
     public State previousState;
@@ -22,6 +23,7 @@ public class Mario extends Sprite {
     private TextureRegion marioStand;
     private Animation marioRun;
     private TextureRegion marioJump;
+    private TextureRegion marioDead;
     private TextureRegion bigMarioStand;
     private TextureRegion bigMarioJump;
     private Animation bigMarioRun;
@@ -33,6 +35,7 @@ public class Mario extends Sprite {
     private boolean runGrowAnimation;
     private boolean timeToDefineBigMario;
     private boolean timeToRedefineBigMario;
+    private boolean marioIsDead;
 
     private PlayScreen screen;
 
@@ -75,6 +78,9 @@ public class Mario extends Sprite {
         marioStand = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 0, 0, 16, 16);
         bigMarioStand = new TextureRegion(screen.getAtlas().findRegion("big_mario"), 0, 0, 16, 32);
 
+        // Create texture region for dead Mario
+        marioDead = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 96, 0, 16, 16);
+
         // Define Mario in Box2d
         defineMario();
 
@@ -99,6 +105,9 @@ public class Mario extends Sprite {
 
         TextureRegion region;
         switch (currentState) {
+            case DEAD:
+                region = marioDead;
+                break;
             case GROWING:
                 region = (TextureRegion) growMario.getKeyFrame(stateTimer);
                 if (growMario.isAnimationFinished(stateTimer))
@@ -228,7 +237,9 @@ public class Mario extends Sprite {
     }
 
     public State getState() {
-        if (runGrowAnimation)
+        if (marioIsDead)
+            return State.DEAD;
+        else if (runGrowAnimation)
             return State.GROWING;
         else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
             return State.JUMPING;
@@ -258,7 +269,14 @@ public class Mario extends Sprite {
             MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
         }
         else
+            MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class).stop();
             MarioBrosGame.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
+            marioIsDead = true;
+            Filter filter = new Filter();
+            filter.maskBits = MarioBrosGame.NOTHING_BIT;
+            for (Fixture fixture : b2body.getFixtureList())
+                fixture.setFilterData(filter);
+            b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
     }
 
     public boolean isBig(){

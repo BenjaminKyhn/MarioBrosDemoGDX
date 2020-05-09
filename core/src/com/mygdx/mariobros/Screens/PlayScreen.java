@@ -99,12 +99,14 @@ public class PlayScreen implements Screen {
     }
 
     public void handleInput(float dt){
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W))
-            player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && player.b2body.getLinearVelocity().x <= 2)
-            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -2)
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+        if (player.currentState != Mario.State.DEAD){
+            if (Gdx.input.isKeyJustPressed(Input.Keys.W))
+                player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
+            if (Gdx.input.isKeyPressed(Input.Keys.D) && player.b2body.getLinearVelocity().x <= 2)
+                player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+            if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -2)
+                player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+        }
     }
 
     public void update(float dt){
@@ -127,7 +129,10 @@ public class PlayScreen implements Screen {
 
         hud.update(dt);
 
-        gamecam.position.x = player.b2body.getPosition().x;
+        // Fix the camera to the player if he's not dead
+        if (player.currentState != Mario.State.DEAD){
+            gamecam.position.x = player.b2body.getPosition().x;
+        }
 
         gamecam.update();
         renderer.setView(gamecam);
