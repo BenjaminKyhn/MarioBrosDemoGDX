@@ -10,6 +10,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
+import com.mygdx.mariobros.Sprites.Enemies.Enemy;
+import com.mygdx.mariobros.Sprites.Enemies.Turtle;
 
 public class Mario extends Sprite {
     public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD}
@@ -261,15 +263,19 @@ public class Mario extends Sprite {
         }
     }
 
-    public void hit(){
-        if (marioIsBig){
-            marioIsBig = false;
-            timeToRedefineBigMario = true;
-            setBounds(getX(), getY(), getWidth(), getHeight() / 2);
-            MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+    public void hit(Enemy enemy){
+        if (enemy instanceof Turtle && ((Turtle)enemy).getCurrentState() == Turtle.State.STANDING_SHELL){
+            ((Turtle) enemy).kick(this.getX() <= enemy.getX() ? Turtle.KICK_RIGHT_SPEED : Turtle.KICK_LEFT_SPEED);
         }
-        else
-            MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class).stop();
+        else {
+            if (marioIsBig){
+                marioIsBig = false;
+                timeToRedefineBigMario = true;
+                setBounds(getX(), getY(), getWidth(), getHeight() / 2);
+                MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+            }
+            else
+                MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class).stop();
             MarioBrosGame.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
             marioIsDead = true;
             Filter filter = new Filter();
@@ -277,6 +283,7 @@ public class Mario extends Sprite {
             for (Fixture fixture : b2body.getFixtureList())
                 fixture.setFilterData(filter);
             b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
+        }
     }
 
     public boolean isBig(){
