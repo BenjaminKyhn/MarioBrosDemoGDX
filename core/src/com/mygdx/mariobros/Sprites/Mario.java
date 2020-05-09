@@ -117,7 +117,7 @@ public class Mario extends Sprite {
         head.set(new Vector2(-2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM), new Vector2(2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM));
         fdef.shape = head;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("head");
+        b2body.createFixture(fdef).setUserData("head"); // 'Causes a crash because this line returns a string in collision with the category bits
     }
 
     public State getState() {
