@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Scenes.HUD;
+import com.mygdx.mariobros.Sprites.Enemy;
 import com.mygdx.mariobros.Sprites.Goomba;
 import com.mygdx.mariobros.Sprites.Mario;
 import com.mygdx.mariobros.Tools.B2WorldCreator;
@@ -34,7 +35,6 @@ public class PlayScreen implements Screen {
 
     // Sprites
     public Mario player;
-    private Goomba goomba;
 
     private Music music;
 
@@ -65,8 +65,6 @@ public class PlayScreen implements Screen {
         music = MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class);
         music.setLooping(true);
         music.play();
-
-        goomba = new Goomba(this, 5.64f, .16f);
     }
 
     @Override
@@ -91,7 +89,8 @@ public class PlayScreen implements Screen {
 
         // Update the player
         player.update(dt);
-        goomba.update(dt);
+        for (Enemy enemy: creator.getGoombas())
+            enemy.update(dt);
         hud.update(dt);
 
         gamecam.position.x = player.b2body.getPosition().x;
@@ -118,7 +117,8 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
         player.draw(game.batch);
-        goomba.draw(game.batch);
+        for (Enemy enemy: creator.getGoombas())
+            enemy.draw(game.batch);
         game.batch.end();
 
         // Draw texture to screen

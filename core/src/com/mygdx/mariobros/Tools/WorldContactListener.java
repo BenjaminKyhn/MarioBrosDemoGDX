@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Sprites.Enemy;
 import com.mygdx.mariobros.Sprites.InteractiveTileObject;
+import com.mygdx.mariobros.Sprites.Mario;
 
 public class WorldContactListener implements ContactListener {
     @Override
@@ -40,6 +41,11 @@ public class WorldContactListener implements ContactListener {
                 break;
             case MarioBrosGame.MARIO_BIT | MarioBrosGame.ENEMY_BIT:
                 Gdx.app.log("MARIO", "DIED");
+                break;
+            case MarioBrosGame.ENEMY_BIT | MarioBrosGame.ENEMY_BIT:
+                ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
+                ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
+                break;
         }
     }
 

@@ -5,12 +5,16 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
 import com.mygdx.mariobros.Sprites.Brick;
 import com.mygdx.mariobros.Sprites.Coin;
+import com.mygdx.mariobros.Sprites.Goomba;
 
 public class B2WorldCreator {
+    private Array<Goomba> goombas;
+
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
@@ -56,5 +60,16 @@ public class B2WorldCreator {
 
             new Coin(screen, rect);
         }
+
+        // Create all goombas
+        goombas = new Array<Goomba>();
+        for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            goombas.add(new Goomba(screen, rect.getX() / MarioBrosGame.PPM, rect.getY() / MarioBrosGame.PPM));
+        }
+    }
+
+    public Array<Goomba> getGoombas() {
+        return goombas;
     }
 }
