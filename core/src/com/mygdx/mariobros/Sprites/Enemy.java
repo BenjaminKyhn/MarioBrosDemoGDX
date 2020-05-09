@@ -8,7 +8,7 @@ import com.mygdx.mariobros.Screens.PlayScreen;
 
 public abstract class Enemy extends Sprite {
     protected World world;
-    protected Screen screen;
+    Screen screen;
     public Body b2body;
 
     public Enemy(PlayScreen screen, float x, float y){
@@ -19,4 +19,6 @@ public abstract class Enemy extends Sprite {
     }
 
     protected abstract void defineEnemy();
+
+    public abstract void hitOnHead();
 }
