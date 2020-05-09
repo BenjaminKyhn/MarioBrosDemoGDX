@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
+import com.mygdx.mariobros.Sprites.Mario;
 
 public abstract class Item extends Sprite {
     protected PlayScreen screen;
@@ -28,7 +29,7 @@ public abstract class Item extends Sprite {
 
     public abstract void defineItem();
 
-    public abstract void use();
+    public abstract void use(Mario mario);
 
     public void draw(Batch batch){
         if (!destroyed)
@@ -44,5 +45,12 @@ public abstract class Item extends Sprite {
 
     public void destroy(){
         toDestroy = true;
+    }
+
+    public void reverseVelocity(boolean x, boolean y){
+        if (x)
+            velocity.x = -velocity.x;
+        if (y)
+            velocity.y = -velocity.y;
     }
 }

@@ -106,10 +106,11 @@ public class Mario extends Sprite {
                 MarioBrosGame.BRICK_BIT |
                 MarioBrosGame.ENEMY_BIT |
                 MarioBrosGame.OBJECT_BIT |
-                MarioBrosGame.ENEMY_HEAD_BIT;
+                MarioBrosGame.ENEMY_HEAD_BIT |
+                MarioBrosGame.ITEM_BIT;
 
         fdef.shape = shape;
-        b2body.createFixture(fdef);
+        b2body.createFixture(fdef).setUserData(this);
 
         // Head collision
         EdgeShape head = new EdgeShape();
