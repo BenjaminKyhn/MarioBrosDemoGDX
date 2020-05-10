@@ -1,5 +1,6 @@
 package com.mygdx.mariobros.Sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -336,7 +337,9 @@ public class Mario extends Sprite {
     }
 
     public void fire() {
-        fireballs.add(new Fireball(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false));
+        if (fireMario)
+            fireballs.add(new Fireball(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false));
+        // TODO: Fix the fireball speed and stop them from crashing the game
     }
 
     public void draw(Batch batch) {
