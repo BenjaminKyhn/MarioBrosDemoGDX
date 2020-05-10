@@ -1,5 +1,6 @@
 package com.mygdx.mariobros.Sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -36,6 +37,7 @@ public class Mario extends Sprite {
     private Animation<TextureRegion> growMario;
 
     private float stateTimer;
+    private float hitTimer;
     private boolean runningRight;
     private boolean marioIsBig;
     private boolean fireMario;
@@ -44,6 +46,7 @@ public class Mario extends Sprite {
     private boolean timeToDefineFireMario;
     private boolean timeToRedefineBigMario;
     private boolean marioIsDead;
+    private boolean marioIsHit;
 
     private PlayScreen screen;
 
@@ -55,6 +58,7 @@ public class Mario extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
+        hitTimer = 0;
         runningRight = true;
 
         // Initialize animations
@@ -124,6 +128,9 @@ public class Mario extends Sprite {
             if (fireball.isDestroyed())
                 fireballs.removeValue(fireball, true);
         }
+
+        if (hitTimer > 5)
+            marioIsHit = false;
     }
 
     public TextureRegion getFrame(float dt) {
@@ -261,6 +268,14 @@ public class Mario extends Sprite {
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
 
+        // Head collision
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM), new Vector2(2 / MarioBrosGame.PPM, 6 / MarioBrosGame.PPM));
+        fdef.filter.categoryBits = MarioBrosGame.MARIO_HEAD_BIT;
+        fdef.shape = head;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData(this); // 'Causes a crash because this line returns a string in collision with the category bits
+
         timeToRedefineBigMario = false;
     }
 
@@ -297,30 +312,34 @@ public class Mario extends Sprite {
         }
     }
 
+    // TODO: Implement invulnerability frames when taking damage
     public void hit(Enemy enemy){
-        if (enemy instanceof Turtle && ((Turtle)enemy).getCurrentState() == Turtle.State.STANDING_SHELL){
-            ((Turtle) enemy).kick(this.getX() <= enemy.getX() ? Turtle.KICK_RIGHT_SPEED : Turtle.KICK_LEFT_SPEED);
-        }
-        else {
-            if (fireMario){
-                fireMario = false;
-                MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+        if (!marioIsHit){
+            hitTimer = 0;
+            marioIsHit = true;
+            if (enemy instanceof Turtle && ((Turtle)enemy).getCurrentState() == Turtle.State.STANDING_SHELL){
+                ((Turtle) enemy).kick(this.getX() <= enemy.getX() ? Turtle.KICK_RIGHT_SPEED : Turtle.KICK_LEFT_SPEED);
             }
-            else if (marioIsBig){
-                marioIsBig = false;
-                timeToRedefineBigMario = true;
-                setBounds(getX(), getY(), getWidth(), getHeight() / 2);
-                MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+            else {
+                if (marioIsBig){
+                    Gdx.app.log("BIG", "HIT");
+                    marioIsBig = false;
+                    fireMario = false;
+                    timeToRedefineBigMario = true;
+                    setBounds(getX(), getY(), getWidth(), getHeight() / 2);
+                    MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+                }
+                else{
+                    MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class).stop();
+                    MarioBrosGame.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
+                    marioIsDead = true;
+                    Filter filter = new Filter();
+                    filter.maskBits = MarioBrosGame.NOTHING_BIT;
+                    for (Fixture fixture : b2body.getFixtureList())
+                        fixture.setFilterData(filter);
+                    b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
+                }
             }
-            else
-                MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class).stop();
-            MarioBrosGame.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
-            marioIsDead = true;
-            Filter filter = new Filter();
-            filter.maskBits = MarioBrosGame.NOTHING_BIT;
-            for (Fixture fixture : b2body.getFixtureList())
-                fixture.setFilterData(filter);
-            b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
         }
     }
 
