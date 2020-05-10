@@ -1,5 +1,6 @@
 package com.mygdx.mariobros.Sprites.Enemies;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
+import com.mygdx.mariobros.Sprites.Fireball;
 import com.mygdx.mariobros.Sprites.Mario;
 
 public class Goomba extends Enemy {
@@ -36,16 +38,15 @@ public class Goomba extends Enemy {
         destroyed = false;
     }
 
-    public void update(float dt){
+    public void update(float dt) {
         stateTime += dt;
-        if (setToDestroy && !destroyed){
+        if (setToDestroy && !destroyed) {
             world.destroyBody(b2body);
             destroyed = true;
             // Didn't work without instantiating the PlayScreen in the class
             setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
             stateTime = 0;
-        }
-        else if (!destroyed){
+        } else if (!destroyed) {
             b2body.setLinearVelocity(velocity);
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
@@ -69,7 +70,8 @@ public class Goomba extends Enemy {
                 MarioBrosGame.BRICK_BIT |
                 MarioBrosGame.ENEMY_BIT |
                 MarioBrosGame.OBJECT_BIT |
-                MarioBrosGame.MARIO_BIT;
+                MarioBrosGame.MARIO_BIT |
+                MarioBrosGame.FIREBALL_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
@@ -89,21 +91,28 @@ public class Goomba extends Enemy {
         b2body.createFixture(fdef).setUserData(this); // adds access to this class from the collision handler WorldContactListener
     }
 
-    public void draw(Batch batch){
+    public void draw(Batch batch) {
         if (!destroyed || stateTime < 1)
             super.draw(batch);
     }
 
     @Override
-    public void hitOnHead(Mario mario){
+    public void hitOnHead(Mario mario) {
+        Gdx.app.log("GOOMBA", "HIT");
         setToDestroy = true;
         MarioBrosGame.manager.get("audio/sounds/stomp.wav", Sound.class).play();
     }
 
-    public void onEnemyHit(Enemy enemy){
+    public void onEnemyHit(Enemy enemy) {
         if (enemy instanceof Turtle && ((Turtle) enemy).currentState == Turtle.State.MOVING_SHELL)
             setToDestroy = true;
         else
             reverseVelocity(true, false);
+    }
+
+    public void onFireballHit(Fireball fireball) {
+        Gdx.app.log("FIREBALL", "HIT");
+        setToDestroy = true;
+        MarioBrosGame.manager.get("audio/sounds/stomp.wav", Sound.class).play();
     }
 }

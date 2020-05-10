@@ -1,5 +1,6 @@
 package com.mygdx.mariobros.Sprites.Enemies;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
+import com.mygdx.mariobros.Sprites.Fireball;
 import com.mygdx.mariobros.Sprites.Mario;
 import com.mygdx.mariobros.Tools.B2WorldCreator;
 
@@ -62,7 +64,8 @@ public class Turtle extends Enemy {
                 MarioBrosGame.BRICK_BIT |
                 MarioBrosGame.ENEMY_BIT |
                 MarioBrosGame.OBJECT_BIT |
-                MarioBrosGame.MARIO_BIT;
+                MarioBrosGame.MARIO_BIT |
+                MarioBrosGame.FIREBALL_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
@@ -140,7 +143,12 @@ public class Turtle extends Enemy {
         }
     }
 
-    public void draw(Batch batch){
+    public void onFireballHit(Fireball fireball) {
+        killed();
+        MarioBrosGame.manager.get("audio/sounds/stomp.wav", Sound.class).play();
+    }
+
+    public void draw(Batch batch) {
         if (!destroyed)
             super.draw(batch);
     }
@@ -151,16 +159,14 @@ public class Turtle extends Enemy {
     }
 
     public void onEnemyHit(Enemy enemy) {
-        if (enemy instanceof Turtle){
-            if (((Turtle) enemy).currentState == State.MOVING_SHELL && currentState != State.MOVING_SHELL){
+        if (enemy instanceof Turtle) {
+            if (((Turtle) enemy).currentState == State.MOVING_SHELL && currentState != State.MOVING_SHELL) {
                 killed();
-            }
-            else if (currentState == State.MOVING_SHELL && ((Turtle) enemy).currentState == State.WALKING)
+            } else if (currentState == State.MOVING_SHELL && ((Turtle) enemy).currentState == State.WALKING)
                 return;
             else
                 reverseVelocity(true, false);
-        }
-        else if (currentState != State.MOVING_SHELL)
+        } else if (currentState != State.MOVING_SHELL)
             reverseVelocity(true, false);
     }
 
