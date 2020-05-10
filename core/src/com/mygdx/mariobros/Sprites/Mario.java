@@ -43,8 +43,7 @@ public class Mario extends Sprite {
     private boolean fireMario;
     private boolean runGrowAnimation;
     private boolean timeToDefineBigMario;
-    private boolean timeToDefineFireMario;
-    private boolean timeToRedefineBigMario;
+    private boolean timeToRedefineMario;
     private boolean marioIsDead;
     private boolean marioIsHit;
 
@@ -122,7 +121,7 @@ public class Mario extends Sprite {
         setRegion(getFrame(dt));
         if (timeToDefineBigMario)
             defineBigMario();
-        if (timeToRedefineBigMario) // TODO: Fix this?
+        if (timeToRedefineMario)
             redefineMario();
 
         for (Fireball fireball : fireballs) {
@@ -276,7 +275,7 @@ public class Mario extends Sprite {
         fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData(this);
 
-        timeToRedefineBigMario = false;
+        timeToRedefineMario = false;
     }
 
     public State getState() {
@@ -307,7 +306,6 @@ public class Mario extends Sprite {
     public void powerUp() {
         if (marioIsBig) {
             fireMario = true;
-            timeToDefineFireMario = true;
             MarioBrosGame.manager.get("audio/sounds/powerup.wav", Sound.class).play();
         }
     }
@@ -320,7 +318,7 @@ public class Mario extends Sprite {
             if (marioIsBig) {
                 marioIsBig = false;
                 fireMario = false;
-                timeToRedefineBigMario = true;
+                timeToRedefineMario = true;
                 setBounds(getX(), getY(), getWidth(), getHeight() / 2);
                 MarioBrosGame.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
             } else {
