@@ -3,6 +3,7 @@ package com.mygdx.mariobros.Sprites;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -40,6 +41,8 @@ public class Mario extends Sprite {
     private boolean marioIsDead;
 
     private PlayScreen screen;
+
+    private Array<Fireball> fireballs;
 
     public Mario(PlayScreen screen) {
         this.screen = screen;
@@ -88,6 +91,8 @@ public class Mario extends Sprite {
 
         setBounds(0, 0, 16 / MarioBrosGame.PPM, 16 / MarioBrosGame.PPM);
         setRegion(marioStand);
+
+        fireballs = new Array<Fireball>();
     }
 
     public void update(float dt) {
@@ -100,6 +105,12 @@ public class Mario extends Sprite {
             defineBigMario();
         if (timeToRedefineBigMario)
             redefineMario();
+
+        for(Fireball fireball : fireballs){
+            fireball.update(dt);
+            if (fireball.isDestroyed())
+                fireballs.removeValue(fireball, true);
+        }
     }
 
     public TextureRegion getFrame(float dt) {
@@ -284,6 +295,16 @@ public class Mario extends Sprite {
                 fixture.setFilterData(filter);
             b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
         }
+    }
+
+    public void fire(){
+        fireballs.add(new Fireball(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false));
+    }
+
+    public void draw(Batch batch){
+        super.draw(batch);
+        for(Fireball fireball : fireballs)
+            fireball.draw(batch);
     }
 
     public boolean isBig(){

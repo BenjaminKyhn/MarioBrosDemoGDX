@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Sprites.Enemies.Enemy;
+import com.mygdx.mariobros.Sprites.Fireball;
 import com.mygdx.mariobros.Sprites.Items.Item;
 import com.mygdx.mariobros.Sprites.Mario;
 import com.mygdx.mariobros.Sprites.TileObjects.InteractiveTileObject;
@@ -59,6 +60,12 @@ public class WorldContactListener implements ContactListener {
                     ((Item) fixA.getUserData()).use((Mario) fixB.getUserData());
                 else
                     ((Item) fixB.getUserData()).use((Mario) fixA.getUserData());
+                break;
+            case MarioBrosGame.FIREBALL_BIT | MarioBrosGame.OBJECT_BIT:
+                if (fixA.getFilterData().categoryBits == MarioBrosGame.FIREBALL_BIT)
+                    ((Fireball) fixA.getUserData()).setToDestroy();
+                else
+                    ((Fireball) fixB.getUserData()).setToDestroy();
                 break;
         }
     }

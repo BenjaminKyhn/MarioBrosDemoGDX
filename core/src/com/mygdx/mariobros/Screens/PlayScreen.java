@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Scenes.HUD;
 import com.mygdx.mariobros.Sprites.Enemies.Enemy;
+import com.mygdx.mariobros.Sprites.Fireball;
 import com.mygdx.mariobros.Sprites.Items.Item;
 import com.mygdx.mariobros.Sprites.Items.ItemDef;
 import com.mygdx.mariobros.Sprites.Items.Mushroom;
@@ -103,6 +104,8 @@ public class PlayScreen implements Screen {
                 player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
             if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -2)
                 player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+                player.fire();
         }
     }
 
