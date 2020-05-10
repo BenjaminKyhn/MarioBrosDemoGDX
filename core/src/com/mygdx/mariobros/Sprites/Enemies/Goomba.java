@@ -98,7 +98,6 @@ public class Goomba extends Enemy {
 
     @Override
     public void hitOnHead(Mario mario) {
-        Gdx.app.log("GOOMBA", "HIT");
         setToDestroy = true;
         MarioBrosGame.manager.get("audio/sounds/stomp.wav", Sound.class).play();
     }
