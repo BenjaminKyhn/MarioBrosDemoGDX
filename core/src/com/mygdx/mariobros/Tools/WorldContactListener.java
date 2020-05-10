@@ -2,6 +2,7 @@ package com.mygdx.mariobros.Tools;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.mariobros.MarioBrosGame;
+import com.mygdx.mariobros.Screens.PlayScreen;
 import com.mygdx.mariobros.Sprites.Enemies.Enemy;
 import com.mygdx.mariobros.Sprites.Fireball;
 import com.mygdx.mariobros.Sprites.Items.Item;
@@ -74,10 +75,7 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy) fixA.getUserData()).onFireballHit((Fireball) fixB.getUserData());
                 break;
             case MarioBrosGame.MARIO_BIT | MarioBrosGame.GOAL_BIT:
-                if (fixA.getFilterData().categoryBits == MarioBrosGame.MARIO_BIT)
-                    ((Mario) fixA.getUserData()).levelComplete((Goal) fixB.getUserData());
-                else
-                    ((Mario) fixB.getUserData()).levelComplete((Goal) fixA.getUserData());
+                PlayScreen.levelComplete = true;
                 break;
         }
     }

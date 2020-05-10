@@ -54,6 +54,8 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
 
+    public static boolean levelComplete;
+
     public PlayScreen(MarioBrosGame game){
         this.game = game;
         atlas = new TextureAtlas("Mario_and_Enemies.pack");
@@ -81,6 +83,7 @@ public class PlayScreen implements Screen {
         itemsToSpawn = new LinkedBlockingQueue<ItemDef>();
 
         goal = creator.getGoal();
+        levelComplete = false;
     }
 
     public void spawnItem(ItemDef idef){
@@ -176,6 +179,12 @@ public class PlayScreen implements Screen {
 
         if (gameOver()){
             game.setScreen(new GameOverScreen(game));
+            dispose();
+        }
+
+        if (levelComplete){
+            MarioBrosGame.manager.get("audio/music/mario_music.ogg", Music.class).stop();
+            game.setScreen(new LevelCompleteScreen(game));
             dispose();
         }
     }
