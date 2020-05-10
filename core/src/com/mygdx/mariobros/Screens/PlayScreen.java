@@ -19,6 +19,7 @@ import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Scenes.HUD;
 import com.mygdx.mariobros.Sprites.Enemies.Enemy;
 import com.mygdx.mariobros.Sprites.Fireball;
+import com.mygdx.mariobros.Sprites.Items.Flower;
 import com.mygdx.mariobros.Sprites.Items.Item;
 import com.mygdx.mariobros.Sprites.Items.ItemDef;
 import com.mygdx.mariobros.Sprites.Items.Mushroom;
@@ -87,6 +88,9 @@ public class PlayScreen implements Screen {
             ItemDef idef = itemsToSpawn.poll();
             if (idef.type == Mushroom.class){
                 items.add(new Mushroom(this, idef.position.x, idef.position.y));
+            }
+            if (idef.type == Flower.class){
+                items.add(new Flower(this, idef.position.x, idef.position.y));
             }
         }
     }
