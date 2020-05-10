@@ -47,6 +47,7 @@ public class Mario extends Sprite {
     private boolean timeToRedefineBigMario;
     private boolean marioIsDead;
     private boolean marioIsHit;
+    private boolean memes;
 
     private PlayScreen screen;
 
@@ -110,6 +111,8 @@ public class Mario extends Sprite {
         setRegion(marioStand);
 
         fireballs = new Array<Fireball>();
+
+        marioIsHit = false;
     }
 
     public void update(float dt) {
@@ -120,7 +123,7 @@ public class Mario extends Sprite {
         setRegion(getFrame(dt));
         if (timeToDefineBigMario)
             defineBigMario();
-        if (timeToRedefineBigMario)
+        if (timeToRedefineBigMario) // TODO: Fix this?
             redefineMario();
 
         for(Fireball fireball : fireballs){
@@ -129,7 +132,8 @@ public class Mario extends Sprite {
                 fireballs.removeValue(fireball, true);
         }
 
-        if (hitTimer > 5)
+        hitTimer++;
+        if (hitTimer > 60)
             marioIsHit = false;
     }
 
@@ -202,7 +206,7 @@ public class Mario extends Sprite {
         fdef.filter.categoryBits = MarioBrosGame.MARIO_HEAD_BIT;
         fdef.shape = head;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData(this); // 'Causes a crash because this line returns a string in collision with the category bits
+        b2body.createFixture(fdef).setUserData(this);
     }
 
     public void defineBigMario() {
@@ -239,7 +243,8 @@ public class Mario extends Sprite {
         fdef.shape = head;
         fdef.isSensor = true;
 
-        b2body.createFixture(fdef).setUserData(this); // 'Causes a crash because this line returns a string in collision with the category bits
+        b2body.createFixture(fdef).setUserData(this);
+
         timeToDefineBigMario = false;
     }
 
@@ -274,7 +279,7 @@ public class Mario extends Sprite {
         fdef.filter.categoryBits = MarioBrosGame.MARIO_HEAD_BIT;
         fdef.shape = head;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData(this); // 'Causes a crash because this line returns a string in collision with the category bits
+        b2body.createFixture(fdef).setUserData(this);
 
         timeToRedefineBigMario = false;
     }
@@ -322,7 +327,6 @@ public class Mario extends Sprite {
             }
             else {
                 if (marioIsBig){
-                    Gdx.app.log("BIG", "HIT");
                     marioIsBig = false;
                     fireMario = false;
                     timeToRedefineBigMario = true;
