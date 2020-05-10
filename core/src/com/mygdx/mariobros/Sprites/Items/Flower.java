@@ -18,12 +18,11 @@ public class Flower extends Item {
 
     public Flower(PlayScreen screen, float x, float y) {
         super(screen, x, y);
-        setRegion(screen.getAtlas().findRegion("flower"), 0, 0, 16, 16);
         frames = new Array<TextureRegion>();
         for (int i = 0; i < 4; i++) {
             frames.add(new TextureRegion(screen.getAtlas().findRegion("flower"), i * 16, 0, 16, 16));
         }
-        animation = new Animation(0.4f, frames);
+        animation = new Animation(0.01f, frames);
         stateTime = 0;
     }
 
@@ -31,7 +30,7 @@ public class Flower extends Item {
     public void defineItem() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(getX(), getY());
-        bdef.type = BodyDef.BodyType.StaticBody;
+        bdef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bdef);
 
         // Fixture definition
@@ -58,6 +57,9 @@ public class Flower extends Item {
     @Override
     public void update(float dt) {
         super.update(dt);
+        stateTime += dt;
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+        setRegion(animation.getKeyFrame(stateTime, true));
+        body.setLinearVelocity(0, 0);
     }
 }

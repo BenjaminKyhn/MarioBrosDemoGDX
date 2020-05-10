@@ -43,7 +43,6 @@ public class Goomba extends Enemy {
         if (setToDestroy && !destroyed) {
             world.destroyBody(b2body);
             destroyed = true;
-            // Didn't work without instantiating the PlayScreen in the class
             setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
             stateTime = 0;
         } else if (!destroyed) {
