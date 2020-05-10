@@ -14,6 +14,7 @@ import com.mygdx.mariobros.MarioBrosGame;
 import com.mygdx.mariobros.Screens.PlayScreen;
 import com.mygdx.mariobros.Sprites.Enemies.Enemy;
 import com.mygdx.mariobros.Sprites.Enemies.Turtle;
+import com.mygdx.mariobros.Sprites.TileObjects.Goal;
 
 public class Mario extends Sprite {
     public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD}
@@ -174,7 +175,7 @@ public class Mario extends Sprite {
 
     public void defineMario() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(32 / MarioBrosGame.PPM, 32 / MarioBrosGame.PPM);
+        bdef.position.set(3150 / MarioBrosGame.PPM, 32 / MarioBrosGame.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
 
@@ -189,7 +190,8 @@ public class Mario extends Sprite {
                 MarioBrosGame.ENEMY_BIT |
                 MarioBrosGame.OBJECT_BIT |
                 MarioBrosGame.ENEMY_HEAD_BIT |
-                MarioBrosGame.ITEM_BIT;
+                MarioBrosGame.ITEM_BIT |
+                MarioBrosGame.GOAL_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
@@ -223,7 +225,8 @@ public class Mario extends Sprite {
                 MarioBrosGame.ENEMY_BIT |
                 MarioBrosGame.OBJECT_BIT |
                 MarioBrosGame.ENEMY_HEAD_BIT |
-                MarioBrosGame.ITEM_BIT;
+                MarioBrosGame.ITEM_BIT |
+                MarioBrosGame.GOAL_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
@@ -262,7 +265,8 @@ public class Mario extends Sprite {
                 MarioBrosGame.ENEMY_BIT |
                 MarioBrosGame.OBJECT_BIT |
                 MarioBrosGame.ENEMY_HEAD_BIT |
-                MarioBrosGame.ITEM_BIT;
+                MarioBrosGame.ITEM_BIT |
+                MarioBrosGame.GOAL_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
@@ -338,6 +342,10 @@ public class Mario extends Sprite {
         if (fireMario)
             fireballs.add(new Fireball(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false));
         // TODO: Fix the fireball speed and stop them from crashing the game
+    }
+
+    public void levelComplete(Goal goal){
+        System.out.println("hi");
     }
 
     public void draw(Batch batch) {

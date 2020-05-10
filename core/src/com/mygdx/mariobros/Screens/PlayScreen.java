@@ -23,6 +23,7 @@ import com.mygdx.mariobros.Sprites.Items.Item;
 import com.mygdx.mariobros.Sprites.Items.ItemDef;
 import com.mygdx.mariobros.Sprites.Items.Mushroom;
 import com.mygdx.mariobros.Sprites.Mario;
+import com.mygdx.mariobros.Sprites.TileObjects.Goal;
 import com.mygdx.mariobros.Tools.B2WorldCreator;
 import com.mygdx.mariobros.Tools.WorldContactListener;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -45,6 +46,8 @@ public class PlayScreen implements Screen {
 
     private Array<Item> items;
     private LinkedBlockingQueue<ItemDef> itemsToSpawn;
+
+    private Goal goal;
 
     // Box2d variables
     private World world;
@@ -76,6 +79,8 @@ public class PlayScreen implements Screen {
 
         items = new Array<Item>();
         itemsToSpawn = new LinkedBlockingQueue<ItemDef>();
+
+        goal = creator.getGoal();
     }
 
     public void spawnItem(ItemDef idef){
@@ -122,6 +127,7 @@ public class PlayScreen implements Screen {
         player.update(dt);
         for (Enemy enemy: creator.getEnemies()){
             enemy.update(dt);
+            // Activate enemies when they get close
             if (enemy.getX() < player.getX() + 224 / MarioBrosGame.PPM)
                 enemy.b2body.setActive(true);
         }

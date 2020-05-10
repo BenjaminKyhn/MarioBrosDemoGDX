@@ -6,6 +6,7 @@ import com.mygdx.mariobros.Sprites.Enemies.Enemy;
 import com.mygdx.mariobros.Sprites.Fireball;
 import com.mygdx.mariobros.Sprites.Items.Item;
 import com.mygdx.mariobros.Sprites.Mario;
+import com.mygdx.mariobros.Sprites.TileObjects.Goal;
 import com.mygdx.mariobros.Sprites.TileObjects.InteractiveTileObject;
 
 public class WorldContactListener implements ContactListener {
@@ -71,6 +72,12 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy) fixB.getUserData()).onFireballHit((Fireball) fixA.getUserData());
                 else
                     ((Enemy) fixA.getUserData()).onFireballHit((Fireball) fixB.getUserData());
+                break;
+            case MarioBrosGame.MARIO_BIT | MarioBrosGame.GOAL_BIT:
+                if (fixA.getFilterData().categoryBits == MarioBrosGame.MARIO_BIT)
+                    ((Mario) fixA.getUserData()).levelComplete((Goal) fixB.getUserData());
+                else
+                    ((Mario) fixB.getUserData()).levelComplete((Goal) fixA.getUserData());
                 break;
         }
     }

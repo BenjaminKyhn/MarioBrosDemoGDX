@@ -13,10 +13,12 @@ import com.mygdx.mariobros.Sprites.Enemies.Turtle;
 import com.mygdx.mariobros.Sprites.TileObjects.Brick;
 import com.mygdx.mariobros.Sprites.TileObjects.Coin;
 import com.mygdx.mariobros.Sprites.Enemies.Goomba;
+import com.mygdx.mariobros.Sprites.TileObjects.Goal;
 
 public class B2WorldCreator {
     private Array<Goomba> goombas;
     private static Array<Turtle> turtles;
+    private Goal goal;
 
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
@@ -48,6 +50,11 @@ public class B2WorldCreator {
             fdef.shape = shape;
             fdef.filter.categoryBits = MarioBrosGame.OBJECT_BIT;
             body.createFixture(fdef);
+        }
+
+        // Create goal fixtures (index 8 in the tmx layers)
+        for (MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject.class)){
+            goal = new Goal(screen, object);
         }
 
         // Create brick bodies/fixtures (index 5 in the tmx layers)
@@ -88,5 +95,9 @@ public class B2WorldCreator {
 
     public static void removeTurtle(Turtle turtle){
         turtles.removeValue(turtle, true);
+    }
+
+    public Goal getGoal(){
+        return goal;
     }
 }
